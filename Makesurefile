@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+@define DOCKER_CMD="docker"
+@define DOCKER_NET="host"
+@define IMAGE_NAME="localhost/docker-test"
+
+@goal default
+@depends_on run
+
+@goal lint
+  hadolint Dockerfile
+  shellcheck ./*.sh Makesurefile
+
+@goal build
+  "${DOCKER_CMD}" build . --tag "${IMAGE_NAME}"
+
+@goal run
+@depends_on network_created build
+  "${DOCKER_CMD}" run --interactive --tty \
+    --rm \
+    --network "${DOCKER_NET}" \
+    --cap-add NET_ADMIN \
+    "${IMAGE_NAME}" || true
+
+@goal network_created @private
+@reached_if "${DOCKER_CMD}" network inspect "${DOCKER_NET}" &> /dev/null
+  "${DOCKER_CMD}" network create "${DOCKER_NET}"
