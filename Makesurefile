@@ -11,8 +11,14 @@
   hadolint Dockerfile
   shellcheck ./*.sh Makesurefile
 
+@goal pull
+  "${DOCKER_CMD}" pull "docker.io/library/ubuntu:22.04"
+
 @goal build
   "${DOCKER_CMD}" build . --tag "${IMAGE_NAME}"
+
+@goal update
+@depends_on pull build
 
 @goal run
 @depends_on network_created build
