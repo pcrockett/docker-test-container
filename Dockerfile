@@ -1,13 +1,13 @@
 FROM docker.io/library/ubuntu:22.04
 ARG DEBIAN_FRONTEND=noninteractive
 
-# hadolint ignore=DL3008
+# hadolint ignore=DL3008,DL4006
 RUN apt-get update && \
 apt-get install --yes --no-install-recommends \
 # Basic packages \
 ca-certificates git curl htop nano man-db \
 # Networking tools \
-nmap iputils-ping net-tools telnet dnsutils netdiscover && \
+nmap iputils-ping net-tools telnet dnsutils netdiscover mtr-tiny && \
 # Include man pages and other dependencies in image: \
 yes | unminimize && \
 apt-get clean && \
